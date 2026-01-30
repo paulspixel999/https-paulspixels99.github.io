@@ -1,0 +1,626 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Paul's Pixels - Photography</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.slide-container {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 600px;
+}
+.slide-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    height: 100%;
+}
+.slide {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 100%;
+}
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 12px;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 24px;
+    border-radius: 50%;
+}
+.arrow-left {
+    left: 20px;
+}
+.arrow-right {
+    right: 20px;
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet"/><style>
+@keyframes revealOutward {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: center;
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+    transform-origin: center;
+  }
+}
+.animate-reveal {
+  animation: revealOutward 2s ease forwards;
+}
+</style><style>
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+#matthew div {
+    font-family: 'Rubik', sans-serif;
+}
+</style><link href="https://fonts.googleapis.com/css2?family=Playfair+Display&amp;display=swap" rel="stylesheet"/><style>
+@keyframes revealOutward {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: center;
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+    transform-origin: center;
+  }
+}
+.quote-reveal-animate {
+  animation: revealOutward 1.5s ease forwards;
+}
+</style><style>
+/* Initial black overlay panels */
+#collapse-overlay .collapse-left,
+#collapse-overlay .collapse-right {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background-color: black;
+  z-index: 9999;
+  transition: transform 1.5s ease, opacity 0.5s ease;
+}
+
+#collapse-overlay .collapse-left {
+  left: 0;
+  transform: translateX(0);
+}
+
+#collapse-overlay .collapse-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+#collapse-overlay.shrink .collapse-left {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+#collapse-overlay.shrink .collapse-right {
+  transform: translateX(100%);
+  opacity: 0;
+}
+</style><link href="https://fonts.googleapis.com/css2?family=Dancing+Script&amp;display=swap" rel="stylesheet"/><style>
+.landscape-slide {
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+.gallery-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+</style><style>
+.landscape-img {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+.slide-container:nth-of-type(2) {
+    max-width: 960px;
+    margin: 0 auto;
+}
+</style><style>
+.portrait-img {
+    aspect-ratio: 9 / 16;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+.slide-container:nth-of-type(2) {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+}
+</style><style>
+    .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    </style><script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const reveals = document.querySelectorAll(".reveal");
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active");
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(reveal => {
+            observer.observe(reveal);
+        });
+    });
+    </script><style>
+    .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    </style><script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const reveals = document.querySelectorAll(".reveal");
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active");
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(reveal => {
+            observer.observe(reveal);
+        });
+    });
+    </script></head>
+<body class="bg-white font-sans">
+<h1 class="text-yellow-400 text-5xl md:text-7xl font-bold fixed inset-0 z-[10000] flex items-center justify-center" id="intro-title" style="font-family: 'Dancing Script', cursive; transition: opacity 1s ease;">
+  Paul's Pixels
+</h1>
+<div class="fixed inset-0 z-[9999] pointer-events-none" id="collapse-overlay">
+<div class="collapse-left"></div>
+<div class="collapse-right"></div>
+</div>
+<!-- Navigation -->
+<nav class="bg-black shadow-lg sticky top-0 z-50 bg-black/70 backdrop-blur-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-center h-16">
+<div class="flex items-center">
+</div>
+<div class="flex items-center space-x-4"><a class="text-yellow-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium gold-accent b o r d e r - b - 2 b o r d e r - y e l l o w - 4 0 0 t r a n s i t i o n - t r a n s f o r m d u r a t i o n - 2 0 0 h o v e r : s c a l e - 1 1 0 transform transition-transform duration-300 hover:scale-125 border-b-2 border-yellow-400 pb-1" href="#home">Home</a><a class="text-yellow-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium gold-accent border-b-2 border-yellow-400 pb-1 transform transition-transform duration-300 hover:scale-125" href="#matthew">Matthew 5:16</a><a class="text-yellow-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium gold-accent b o r d e r - b - 2 b o r d e r - y e l l o w - 4 0 0 t r a n s i t i o n - t r a n s f o r m d u r a t i o n - 2 0 0 h o v e r : s c a l e - 1 1 0 transform transition-transform duration-300 hover:scale-125 border-b-2 border-yellow-400 pb-1" href="#portfolio">Portfolio</a><a class="text-yellow-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium gold-accent b o r d e r - b - 2 b o r d e r - y e l l o w - 4 0 0 t r a n s i t i o n - t r a n s f o r m d u r a t i o n - 2 0 0 h o v e r : s c a l e - 1 1 0 transform transition-transform duration-300 hover:scale-125 border-b-2 border-yellow-400 pb-1" href="#then-vs-now">Then vs Now</a><a class="text-yellow-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium gold-accent border-b-2 border-yellow-400 pb-1 transform transition-transform duration-300 hover:scale-125 font-pixel" href="#videos">Videos</a><a class="text-yellow-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium gold-accent b o r d e r - b - 2 b o r d e r - y e l l o w - 4 0 0 t r a n s i t i o n - t r a n s f o r m d u r a t i o n - 2 0 0 h o v e r : s c a l e - 1 1 0 transform transition-transform duration-300 hover:scale-125 border-b-2 border-yellow-400 pb-1" href="#about">About</a><a class="text-yellow-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium gold-accent b o r d e r - b - 2 b o r d e r - y e l l o w - 4 0 0 t r a n s i t i o n - t r a n s f o r m d u r a t i o n - 2 0 0 h o v e r : s c a l e - 1 1 0 transform transition-transform duration-300 hover:scale-125 border-b-2 border-yellow-400 pb-1" href="#contact">Contact</a></div>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative h-screen flex items-center justify-center bg-cover bg-center pt-16" id="home" style="background-image: url('https://source.unsplash.com/1600x900/?landscape')">
+<div class="text-center text-white"><div style="font-family: 'Press Start 2P', cursive; font-size: 2.75rem; color: #facc15; letter-spacing: 6px; margin-bottom: 0.5rem; position: relative; z-index: 50;">Paul's Pixels</div><hr style="border: none; height: 4px; background-color: #facc15; width: max-content; min-width: 100%; margin: 0 auto; margin-top: 6px; position: relative; z-index: 100;"/><div style="height: 4px; background-color: #facc15; width: fit-content; margin: 0 auto; margin-top: 4px; position: relative; z-index: 100;"></div><div style="border-bottom: 4px solid #facc15; width: fit-content; margin: 0 auto; position: relative; z-index: 50;"></div>
+</div>
+<div class="absolute inset-0" style="background-image: url('./Images//BG.JPG'); background-size: cover; background-position: center;"></div>
+</section>
+<!-- Portfolio Section -->
+<section class="py-32 bg-white text-center relative overflow-hidden" id="matthew"><div class="animate-reveal inline-block opacity-0"><div class="quote-reveal-trigger text-black text-center leading-tight space-y-2" style="font-family: 'Playfair Display', serif; opacity: 0; transform: scaleX(0); transform-origin: center; transition: transform 1.5s ease, opacity 1.5s ease; max-width: 90%; margin: 0 auto; padding: 3rem 0; font-family: 'Playfair Display', serif; opacity: 0;">
+<div class="text-3xl">LET YOUR</div>
+<div class="text-9xl font-extrabold">LIGHT <span class="text-[#facc15]">SHINE</span></div>
+<div class="text-6xl">BEFORE OTHERS</div>
+<div class="text-3xl">THAT THEY MAY SEE YOUR GOOD DEEDS</div>
+<div class="text-3xl">AND GLORIFY YOUR FATHER IN HEAVEN</div>
+<div class="text-2xl italic mt-4">– Jesus Christ</div>
+</div></div></section><section class="bg-white px-4 sm:px-8" id="portfolio"><h2 class="text-4xl text-center font-bold my-6">Portfolio</h2><div class="grid grid-cols-12 gap-4 max-w-screen-xl mx-auto px-6"><div class="col-span-4 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 1" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/1.JPG"/></div></div><div class="col-span-4 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 2" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/2.JPG"/></div></div><div class="col-span-4 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 3" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/3.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 4" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/4.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 5" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/5.JPG"/></div></div><div class="col-span-6 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 6" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/6.JPG"/></div></div><div class="col-span-6 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 7" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/7.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 8" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/8.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 9" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/9.JPG"/></div></div><div class="col-span-4 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 10" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/10.JPG"/></div></div><div class="col-span-4 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 11" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/11.JPG"/></div></div><div class="col-span-4 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 12" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/12.JPG"/></div></div><div class="col-span-6 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 13" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/13.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 14" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/14.JPG"/></div></div>
+<div class="col-span-3 reveal">
+<div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300">
+<div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div>
+<img alt="Photo 15" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/15.JPG"/>
+</div>
+</div>
+<div class="col-span-6 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 16" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/16.JPG"/></div></div><div class="col-span-6 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 17" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/17.JPG"/></div></div><div class="col-span-6 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 18" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/18.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 19" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/19.JPG"/></div></div>
+<div class="col-span-3 reveal">
+<div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300">
+<div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div>
+<img alt="Photo 20" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/20.JPG"/>
+</div>
+</div>
+<div class="col-span-6 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 21" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/21.JPG"/></div></div><div class="col-span-6 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 22" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/22.JPG"/></div></div><div class="col-span-4 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 23" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/23.JPG"/></div></div><div class="col-span-4 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 24" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/24.JPG"/></div></div><div class="col-span-4 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 25" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/25.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 26" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/26.JPG"/></div></div><div class="col-span-3 reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 27" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/27.JPG"/></div></div><div class="col-span-6 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 28" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/28.JPG"/></div></div><div class="col-span-12 md:aspect-[16/9] reveal"><div class="relative w-full h-full shadow-md hover:shadow-xl transition-shadow duration-300 h - a u t o"><div class="absolute inset-0 border-2 border-white rounded-lg z-0"></div><img alt="Photo 29" class="mx-auto block z-10 relative w-full rounded-lg h-full object-cover my-auto" src="./Images/29.JPG"/></div></div></div></section>
+<!-- Then vs Now Section -->
+<section class="py-16 bg-white" id="then-vs-now">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-4xl font-bold text-center text-black mb-12 gold-accent w-full">Then vs Now</h2>
+<div class="slide-container"><div class="arrow bg-yellow-400 text-black px-3 py-2 rounded-full cursor-pointer left-0 z - 1 0" onclick="moveThenNowSlide(-1)" style="top: 50%; transform: translateY(-50%); position: absolute; padding: 12px; background: #facc15; color: black; border-radius: 9999px; left: 20px;">❮</div>
+<div class="slide-wrapper" id="thenNowSlideWrapper">
+<div class="slide">
+<div class="img-comp-container relative h-full w-full">
+<div class="img-comp-img">
+<img alt="Before" class="object-cover w-full h-full" src="./Images/Slider/2.JPG"/>
+</div>
+<div class="img-comp-img img-comp-overlay">
+<img alt="After" class="object-cover w-full h-full" src="./Images/Slider/1.JPG"/>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="img-comp-container relative h-full w-full">
+<div class="img-comp-img">
+<img alt="Before" class="object-cover w-full h-full" src="./Images/Slider/4.JPG"/>
+</div>
+<div class="img-comp-img img-comp-overlay">
+<img alt="After" class="object-cover w-full h-full" src="./Images/Slider/3.JPG"/>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="img-comp-container relative h-full w-full">
+<div class="img-comp-img">
+<img alt="Before" class="object-cover w-full h-full" src="./Images/Slider/6.JPG"/>
+</div>
+<div class="img-comp-img img-comp-overlay">
+<img alt="After" class="object-cover w-full h-full" src="./Images/Slider/5.JPG"/>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="img-comp-container relative h-full w-full">
+<div class="img-comp-img">
+<img alt="Before" class="object-cover w-full h-full" src="./Images/Slider/8.JPG"/>
+</div>
+<div class="img-comp-img img-comp-overlay">
+<img alt="After" class="object-cover w-full h-full" src="./Images/Slider/7.JPG"/>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="img-comp-container relative h-full w-full">
+<div class="img-comp-img">
+<img alt="Before" class="object-cover w-full h-full" src="./Images/Slider/10.JPG"/>
+</div>
+<div class="img-comp-img img-comp-overlay">
+<img alt="After" class="object-cover w-full h-full" src="./Images/Slider/9.JPG"/>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="img-comp-container relative h-full w-full">
+<div class="img-comp-img">
+<img alt="Before" class="object-cover w-full h-full" src="./Images/Slider/12.JPG"/>
+</div>
+<div class="img-comp-img img-comp-overlay">
+<img alt="After" class="object-cover w-full h-full" src="./Images/Slider/11.JPG"/>
+</div>
+</div>
+</div>
+</div>
+<div class="arrow bg-yellow-400 text-black px-3 py-2 rounded-full cursor-pointer right-0 z - 1 0" onclick="moveThenNowSlide(1)" style="top: 50%; transform: translateY(-50%); position: absolute; padding: 12px; background: #facc15; color: black; border-radius: 9999px; right: 20px;">❯</div></div>
+</div>
+</section>
+<section class="py-16 bg-white" id="videos">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<h2 class="text-3xl font-bold text-black mb-8 font-pixel">Videos</h2>
+<div class="flex justify-center">
+</div>
+<div class="relative overflow-hidden w-full max-w-7xl mx-auto">
+<div class="arrow arrow-left absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-yellow-400 text-black px-3 py-2 rounded-full cursor-pointer" onclick="moveVideoSlide(-1)">❮</div>
+<div class="flex transition-transform duration-500 ease-in-out" id="videoSlideWrapper">
+<video class="w-full max-w-xs aspect-[9/16] rounded-lg border-4 border-yellow-400 mx-2 block" controls>
+  <source src="./Videos/1.mp4" type="video/mp4" />
+</video>
+<video class="w-full max-w-xs aspect-[9/16] rounded-lg border-4 border-yellow-400 mx-2 block" controls>
+  <source src="./Videos/2.mp4" type="video/mp4" />
+</video>
+<video class="w-full max-w-xs aspect-[9/16] rounded-lg border-4 border-yellow-400 mx-2 block" controls>
+  <source src="./Videos/3.mp4" type="video/mp4" />
+</video>
+<video class="w-full max-w-xs aspect-[9/16] rounded-lg border-4 border-yellow-400 mx-2 block" controls>
+  <source src="./Videos/4.mp4" type="video/mp4" />
+</video>
+<video class="w-full max-w-xs aspect-[9/16] rounded-lg border-4 border-yellow-400 mx-2 block" controls>
+  <source src="./Videos/5.mp4" type="video/mp4" />
+</video>
+<video class="w-full max-w-xs aspect-[9/16] rounded-lg border-4 border-yellow-400 mx-2 block" controls>
+  <source src="./Videos/6.mp4" type="video/mp4" />
+</video>
+</div>
+<div class="arrow arrow-right absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-yellow-400 text-black px-3 py-2 rounded-full cursor-pointer" onclick="moveVideoSlide(1)">❯</div>
+</div>
+</div>
+</section>
+<script>
+function initComparisonDeck() {
+  const containers = document.querySelectorAll(".img-comp-container");
+
+  containers.forEach(container => {
+    const overlay = container.querySelector(".img-comp-overlay");
+    const slider = document.createElement("div");
+    slider.className = "img-comp-slider";
+    container.appendChild(slider);
+
+    let clicked = false;
+    let w = container.offsetWidth;
+
+    overlay.style.width = (w / 2) + "px";
+    slider.style.left = (w / 2) + "px";
+
+    // Prevent image shift/zoom: left image stays in place, right image revealed
+    slider.addEventListener("mousedown", () => clicked = true);
+    window.addEventListener("mouseup", () => clicked = false);
+    window.addEventListener("mousemove", function(e) {
+      if (!clicked) return;
+      let x = e.pageX - container.getBoundingClientRect().left;
+      if (x < 0) x = 0;
+      if (x > w) x = w;
+      overlay.style.clipPath = `inset(0 ${w - x}px 0 0)`;
+      overlay.style.width = w + "px";
+      slider.style.left = x + "px";
+    });
+  });
+}
+window.addEventListener("load", initComparisonDeck);
+</script>
+<style>
+.img-comp-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 4525 / 3017;
+  overflow: hidden;
+}
+.img-comp-img {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.img-comp-img img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover; position: absolute; top: 0; left: 0;
+}
+.img-comp-overlay {
+  width: 50%;
+  top: 0;
+  left: 0;
+}
+.img-comp-slider {
+  position: absolute;
+  z-index: 10;
+  cursor: ew-resize;
+  width: 10px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #facc15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-comp-slider::before {
+  content: '';
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 6px;
+  transform: rotate(135deg);
+  margin-right: 2px;
+}
+.img-comp-slider::after {
+  content: '';
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 6px;
+  transform: rotate(-45deg);
+  margin-left: 2px;
+}
+</style>
+<!-- About Section -->
+<section class="py-16 bg-yellow-100" id="about"><h2 class="text-4xl font-bold text-center text-black mb-6">About Paul</h2>
+<div class="flex flex-col md:flex-row items-center justify-center gap-10 px-6 max-w-screen-xl mx-auto">
+<div class="w-48 h-48 md:w-64 md:h-64 rounded-full border-8 border-yellow-400 overflow-hidden flex-shrink-0">
+<div class="w-full h-full bg-gray-300"><img alt="Paul's Photo" class="w-full h-full object-cover" src="./Images/Me.JPG"/></div>
+</div>
+<div class="max-w-2xl text-left font-sans">
+<p class="text-black text-lg sm:text-xl md:text-2xl font-light leading-relaxed">
+                Hi! I’m Paul, a cadet at the United States Military Academy at West Point.<br/><br/>
+                My mission is to share the love of Christ through photography and videography.
+                In a world overwhelmed by materialism, we often forget the second greatest commandment:<br/><br/>
+<span class="text-yellow-400 font-semibold italic text-2xl">“Love your neighbor as yourself.” – Matthew 22:39</span><br/><br/>
+                I wouldn’t charge myself for memories—so why should I charge others?<br/>
+                If you need photos or videos, feel free to reach out. If I’m available, I’d love to serve you!
+            </p>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section class="py-16 bg-white" id="contact">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl font-bold text-center text-black mb-12 gold-accent inline-block">Get in Touch</h2>
+<div class="max-w-lg mx-auto">
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-black" for="name">Name</label>
+<input class="mt-1 block w-full rounded-md border-yellow-400 shadow-sm focus:border-yellow-500 focus:ring-yellow-500" id="name" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-black" for="email">Email</label>
+<input class="mt-1 block w-full rounded-md border-yellow-400 shadow-sm focus:border-yellow-500 focus:ring-yellow-500" id="email" type="email"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-black" for="message">Message</label>
+<textarea class="mt-1 block w-full rounded-md border-yellow-400 shadow-sm focus:border-yellow-500 focus:ring-yellow-500" id="message" rows="4"></textarea>
+</div>
+<div>
+<button class="w-full bg-yellow-400 text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-500" onclick="alert('Message sent! We will get back to you soon.')">Send Message</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-black text-white py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col items-center">
+<p class="text-sm">© 2025 Paul's Pixels. All rights reserved.</p>
+<div class="mt-4 flex space-x-4">
+<a class="text-yellow-400 hover:text-white gold-hover px-2 py-1 rounded" href="https://www.instagram.com/paulspixels_99" rel="noopener noreferrer" target="_blank"><img height="20" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" style="display:inline; margin-right: 6px; vertical-align: middle;" width="20"/>Instagram</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll('.landscape-slide');
+const slideWrapper = document.getElementById('slideWrapper');
+const totalSlides = slides.length;
+const visibleSlides = 3;
+
+function moveSlide(direction) {
+    currentSlide += direction;
+    if (currentSlide < 0) currentSlide = totalSlides - visibleSlides;
+    if (currentSlide > totalSlides - visibleSlides) currentSlide = 0;
+    const slideWidth = slides[0].offsetWidth;
+    slideWrapper.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+}
+
+let landscapeCurrent = 0;
+const landscapeSlides = document.querySelectorAll('#landscapeSlideWrapper .slide');
+const landscapeWrapper = document.getElementById('landscapeSlideWrapper');
+const landscapeVisible = 3;
+const landscapeTotal = landscapeSlides.length;
+
+function moveLandscape(dir) {
+    landscapeCurrent += dir;
+    if (landscapeCurrent < 0) landscapeCurrent = landscapeTotal - landscapeVisible;
+    if (landscapeCurrent > landscapeTotal - landscapeVisible) landscapeCurrent = 0;
+    const slideWidth = landscapeSlides[0].offsetWidth;
+    landscapeWrapper.style.transform = `translateX(-${landscapeCurrent * slideWidth}px)`;
+}
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const quote = document.querySelector(".quote-reveal-trigger");
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                quote.classList.add("quote-reveal-animate");
+                observer.unobserve(quote);
+            }
+        });
+    }, { threshold: 0.5 });
+    if (quote) observer.observe(quote);
+});
+</script><script>
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("collapse-overlay");
+  const title = document.getElementById("intro-title");
+
+  setTimeout(() => {
+    if (title) title.style.opacity = "0";
+  }, 500); // fade out title
+
+  setTimeout(() => {
+    overlay.classList.add("shrink");
+  }, 1000); // slide out overlay
+
+  setTimeout(() => {
+    if (overlay) overlay.style.zIndex = "-9999";
+    if (title) title.style.zIndex = "-9999";
+  }, 2500); // push both to back after animation
+});
+</script><script>
+    let currentVideoIndex = 0;
+    const videoWrapper = document.getElementById("videoSlideWrapper");
+    const videoElements = videoWrapper.children;
+    const totalVideos = videoElements.length;
+    const visibleVideos = 3;
+    const slideWidth = videoElements[0].offsetWidth + 16; // include margin
+
+    function moveVideoSlide(direction) {
+        currentVideoIndex += direction;
+        if (currentVideoIndex < 0) currentVideoIndex = totalVideos - visibleVideos;
+        if (currentVideoIndex > totalVideos - visibleVideos) currentVideoIndex = 0;
+        videoWrapper.style.transform = `translateX(-${currentVideoIndex * slideWidth}px)`;
+    }
+    </script><script>
+    let thenNowCurrentSlide = 0;
+    const thenNowSlides = document.querySelectorAll("#thenNowSlideWrapper .slide");
+    const thenNowWrapper = document.getElementById("thenNowSlideWrapper");
+    const thenNowTotal = thenNowSlides.length;
+
+    function moveThenNowSlide(direction) {
+        thenNowCurrentSlide += direction;
+        if (thenNowCurrentSlide < 0) thenNowCurrentSlide = thenNowTotal - 1;
+        if (thenNowCurrentSlide >= thenNowTotal) thenNowCurrentSlide = 0;
+        const slideWidth = thenNowSlides[0].offsetWidth;
+        thenNowWrapper.style.transform = `translateX(-${thenNowCurrentSlide * slideWidth}px)`;
+    }
+    </script></body>
+</html>
